@@ -10,6 +10,7 @@ An [Eleventy](https://www.11ty.dev/) plugin that automatically appends cache-bus
 - **Template filter & shortcode** — opt-in per-URL rewriting from Nunjucks, Liquid, or JS templates
 - **CDN-friendly** — appends `?v=<token>` as a query parameter so CDN routing paths stay intact
 - **Graceful fallback** — if a file can't be read (e.g. external CDN assets), falls back to the build-time token automatically
+- **Dual CJS/ESM package** — works in both CommonJS and ES Module projects with no extra configuration
 
 ---
 
@@ -21,13 +22,40 @@ npm install eleventy-cachebust-plugin --save-dev
 
 ---
 
+## ESM and CJS support
+
+The plugin ships as a dual package and works in both CommonJS and ES Module projects. Node automatically picks the right format — no extra configuration needed.
+
+**CommonJS** (`.eleventy.js` without `"type": "module"`):
+```js
+const cacheBustPlugin = require("eleventy-cachebust-plugin");
+```
+
+**ESM** (`.eleventy.js` with `"type": "module"`, or `.eleventy.mjs`):
+```js
+import cacheBustPlugin from "eleventy-cachebust-plugin";
+```
+
+---
+
 ## Quick Start
 
+**CommonJS:**
 ```js
 // .eleventy.js
 const cacheBustPlugin = require("eleventy-cachebust-plugin");
 
 module.exports = (eleventyConfig) => {
+  eleventyConfig.addPlugin(cacheBustPlugin);
+};
+```
+
+**ESM:**
+```js
+// .eleventy.mjs
+import cacheBustPlugin from "eleventy-cachebust-plugin";
+
+export default (eleventyConfig) => {
   eleventyConfig.addPlugin(cacheBustPlugin);
 };
 ```
@@ -173,11 +201,26 @@ Available in Nunjucks, Liquid, and JS templates:
 
 ### Disable in development, enable in production
 
+**CommonJS:**
 ```js
 // .eleventy.js
 const cacheBustPlugin = require("eleventy-cachebust-plugin");
 
 module.exports = (eleventyConfig) => {
+  eleventyConfig.addPlugin(cacheBustPlugin, {
+    enabled: process.env.NODE_ENV === "production",
+    strategy: "hash",
+    assets: ["js", "css", "images", "fonts"],
+  });
+};
+```
+
+**ESM:**
+```js
+// .eleventy.mjs
+import cacheBustPlugin from "eleventy-cachebust-plugin";
+
+export default (eleventyConfig) => {
   eleventyConfig.addPlugin(cacheBustPlugin, {
     enabled: process.env.NODE_ENV === "production",
     strategy: "hash",
@@ -212,13 +255,25 @@ eleventyConfig.addPlugin(cacheBustPlugin, {
 
 ## Using strategies directly
 
-The strategy functions are exported if you need them outside the plugin context:
+The strategy functions are exported if you need them outside the plugin context.
 
+**CommonJS:**
 ```js
 const { strategies, resolveExtensions } = require("eleventy-cachebust-plugin");
 
 const token = strategies.hashStrategy("/path/to/file.js", "sha256");
 const buildToken = strategies.buildTimeStrategy();
+
+const exts = resolveExtensions(["js", "css"]);
+// => Set { '.js', '.mjs', '.cjs', '.css' }
+```
+
+**ESM:**
+```js
+import { hashStrategy, buildTimeStrategy, resolveExtensions } from "eleventy-cachebust-plugin";
+
+const token = hashStrategy("/path/to/file.js", "sha256");
+const buildToken = buildTimeStrategy();
 
 const exts = resolveExtensions(["js", "css"]);
 // => Set { '.js', '.mjs', '.cjs', '.css' }
