@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/yourusername/eleventy-cachebust-plugin.git"
   },
+  "homepage": "https://github.com/akhilgrover-bs/eleventy-cachebust-plugin#readme",
   "exports": {
     ".": {
       "import": "./src/index.mjs",
