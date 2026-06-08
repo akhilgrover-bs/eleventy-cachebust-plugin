@@ -4,6 +4,10 @@
   "description": "Eleventy plugin for CDN cache busting. Supports hash-based and build-time strategies with per-asset-type control.",
   "main": "src/index.js",
   "module": "src/index.mjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/eleventy-cachebust-plugin.git"
+  },
   "exports": {
     ".": {
       "import": "./src/index.mjs",
@@ -13,7 +17,14 @@
   "scripts": {
     "test": "node --test tests/*.test.js && node --test tests/*.test.mjs"
   },
-  "keywords": ["eleventy", "11ty", "plugin", "cache-busting", "cdn", "assets"],
+  "keywords": [
+    "eleventy",
+    "11ty",
+    "plugin",
+    "cache-busting",
+    "cdn",
+    "assets"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
